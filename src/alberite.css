@@ -1,0 +1,19 @@
+.menu_shadow {
+  box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.alberite_splash_container {
+  overflow: auto;
+  height: 100%;
+  top: 50px;
+}
+
+.alberite_generic_table {
+  margin: 20px;
+  float: left;
+  box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.alberite_log_table {
+  line-height: 1em;
+}
