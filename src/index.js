@@ -536,7 +536,8 @@ class MainLayout extends React.Component {
   remoteRequest(url, successCallback, errorCallback) {
     fetch(url, {
       mode: "cors",
-      method: "get"
+      method: "get",
+      credentials: "include"
     })
       .then(function(response) {
         return response.json();
