@@ -77,7 +77,7 @@ class AlberiteTable extends React.Component {
       if (this.props.rows === null) {
         theRows = [
           <tr className="pure-table-odd" key="loadingRows">
-            <td key="loadingRow" colSpan={this.props.headerProps.length}>
+            <td key="loadingRow" colSpan={this.props.headerProps.length + 1}>
               Cargando información...
             </td>
           </tr>
@@ -226,11 +226,11 @@ class AlberiteHour extends React.Component {
 class AlberiteEditingTable extends AlberiteTable {
   constructor(props) {
     super(props);
-    this.state = this.generateInitialState();
+    this.state = this.generateInitialState(props);
   }
-  generateInitialState() {
+  generateInitialState(props) {
     const initialState = {};
-    this.props.headerProps.forEach(headerProp => {
+    props.headerProps.forEach(headerProp => {
       if (headerProp.possibleValues) {
         initialState[headerProp.prop] = headerProp.possibleValues[0].value;
       }
