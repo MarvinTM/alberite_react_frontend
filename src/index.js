@@ -466,118 +466,78 @@ class MainLayout extends React.Component {
   }
   deleteProgrammedValue(index) {
     var me = this;
-    fetch(
+    this.remoteRequest(
       "http://villacautela.com/cancelProgrammedAction?programmedAction=" +
         index,
-      {
-        mode: "cors",
-        method: "get"
-      }
-    )
-      .then(function(response) {
-        return response.json();
-      })
-      .then(function(data) {
+      function(data) {
         //TODO: MESSAGE!!!
         me.loadData();
-      })
-      .catch(function(err) {
-        console.error("error while reading loginfo: ", err);
-      });
+      }
+    );
   }
   modifyDirectValues(values) {
     var me = this;
-    fetch(
+    this.remoteRequest(
       "http://villacautela.com/startSystemAction?" + buildGETRequest(values),
-      {
-        mode: "cors",
-        method: "get"
-      }
-    )
-      .then(function(response) {
-        return response.json();
-      })
-      .then(function(data) {
+      function(data) {
         //TODO: MESSAGE!!!
         me.loadData();
-      })
-      .catch(function(err) {
-        console.error("error while reading loginfo: ", err);
-      });
+      }
+    );
   }
   modifyProgrammedValues(values) {
     var me = this;
-    fetch(
+    this.remoteRequest(
       "http://villacautela.com/insertProgrammedAction?" +
         buildGETRequest(values),
-      {
-        mode: "cors",
-        method: "get"
-      }
-    )
-      .then(function(response) {
-        return response.json();
-      })
-      .then(function(data) {
+      function(data) {
         //TODO: MESSAGE!!!
         me.loadData();
-      })
-      .catch(function(err) {
-        console.error("error while reading loginfo: ", err);
-      });
+      }
+    );
   }
   loadData() {
     const me = this;
-    fetch("http://villacautela.com/loginfo", { mode: "cors", method: "get" })
-      .then(function(response) {
-        return response.json();
-      })
-      .then(function(data) {
-        me.setState({ logRows: data });
-      })
-      .catch(function(err) {
-        console.error("error while reading loginfo: ", err);
-      });
-    fetch("http://villacautela.com/pastActionsInfo", {
-      method: "get"
-    })
-      .then(function(response) {
-        return response.json();
-      })
-      .then(function(data) {
-        me.setState({ pastActionRows: data });
-      })
-      .catch(function(err) {
-        console.error("error while reading pastActionsInfo: ", err);
-      });
-    fetch("http://villacautela.com/actionsInfo", {
-      method: "get"
-    })
-      .then(function(response) {
-        return response.json();
-      })
-      .then(function(data) {
-        me.setState({ actionRows: data });
-      })
-      .catch(function(err) {
-        console.error("error while reading pastActionsInfo: ", err);
-      });
-    fetch("http://villacautela.com/programmedActionsInfo", {
-      method: "get"
-    })
-      .then(function(response) {
-        return response.json();
-      })
-      .then(function(data) {
+
+    this.remoteRequest("http://villacautela.com/loginfo", function(data) {
+      me.setState({ logRows: data });
+    });
+    this.remoteRequest("http://villacautela.com/pastActionsInfo", function(
+      data
+    ) {
+      me.setState({ pastActionRows: data });
+    });
+    this.remoteRequest("http://villacautela.com/actionsInfo", function(data) {
+      me.setState({ actionRows: data });
+    });
+    this.remoteRequest(
+      "http://villacautela.com/programmedActionsInfo",
+      function(data) {
         me.setState({ programmedActionRows: data });
-      })
-      .catch(function(err) {
-        console.error("error while reading pastActionsInfo: ", err);
-      });
+      }
+    );
   }
   setMenuTab(tab) {
-    console.log("new tab: " + tab);
     this.setState({ currentTab: tab });
+  }
+  remoteRequest(url, successCallback, errorCallback) {
+    fetch(url, {
+      mode: "cors",
+      method: "get",
+      credentials: "include"
+    })
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(data) {
+        successCallback(data);
+      })
+      .catch(function(err) {
+        console.error("error while executing remote request: " + url, err);
+        if (errorCallback) {
+          errorCallback();
+        }
+      });
   }
   render() {
     if (this.state.currentTab === "status") {
