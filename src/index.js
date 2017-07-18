@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import "./pure-min.css";
 import "./marketing.css";
 import "./alberite.css";
+import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 
 class Header extends React.Component {
   render() {
@@ -51,6 +52,11 @@ class Header extends React.Component {
 }
 
 class AlberiteTable extends React.Component {
+  constructor() {
+    super();
+    this.state = { transitionEnabled: false };
+    setTimeout(() => this.setState({ transitionEnabled: true }), 5000);
+  }
   generateTable() {
     return true;
   }
@@ -104,7 +110,7 @@ class AlberiteTable extends React.Component {
             values.push(additionalColumn);
           }
           return (
-            <tr className="pure-table-odd" key={keyValue}>
+            <tr className="pure-table-odd alberite_fade" key={keyValue}>
               {values}
             </tr>
           );
@@ -144,9 +150,16 @@ class AlberiteTable extends React.Component {
               {theHeader}
             </tr>
           </thead>
-          <tbody>
+          <ReactCSSTransitionGroup
+            component="tbody"
+            transitionName="anim"
+            transitionAppear={false}
+            transitionEnterTimeout={2000}
+            transitionEnter={this.state.transitionEnabled}
+            transitionLeave={false}
+          >
             {theRows}
-          </tbody>
+          </ReactCSSTransitionGroup>
         </table>
       </div>
     );
@@ -523,8 +536,7 @@ class MainLayout extends React.Component {
   remoteRequest(url, successCallback, errorCallback) {
     fetch(url, {
       mode: "cors",
-      method: "get",
-      credentials: "include"
+      method: "get"
     })
       .then(function(response) {
         return response.json();

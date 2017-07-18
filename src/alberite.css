@@ -43,3 +43,12 @@
 .alberite_cursor {
   cursor: pointer;
 }
+
+.anim-enter {
+  opacity: 0.01;
+}
+
+.anim-enter.anim-enter-active {
+  opacity: 2;
+  transition: opacity 2s ease-in;
+}
