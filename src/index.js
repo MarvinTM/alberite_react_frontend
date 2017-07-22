@@ -355,6 +355,14 @@ class StatusBody extends React.Component {
           ]}
           tableName="Riegos en cola"
         />
+        <AlberiteTable
+          rows={this.props.gpioState}
+          headerProps={[
+            { name: "Puerto", prop: "pin" },
+            { name: "Estado", prop: "status" }
+          ]}
+          tableName="Estado puertos GPIO"
+        />
       </div>
     );
   }
@@ -471,7 +479,8 @@ class MainLayout extends React.Component {
       actionRows: null,
       pastActionRows: null,
       programmedActionRows: null,
-      currentTab: "status"
+      currentTab: "status",
+      gpioState: null
     };
 
     this.loadData();
@@ -523,6 +532,9 @@ class MainLayout extends React.Component {
     this.remoteRequest("http://villacautela.com/actionsInfo", function(data) {
       me.setState({ actionRows: data });
     });
+    this.remoteRequest("http://villacautela.com/gpioInfo", function(data) {
+      me.setState({ gpioState: data });
+    });
     this.remoteRequest(
       "http://villacautela.com/programmedActionsInfo",
       function(data) {
@@ -564,6 +576,7 @@ class MainLayout extends React.Component {
             logRows={this.state.logRows}
             actionRows={this.state.actionRows}
             pastActionRows={this.state.pastActionRows}
+            gpioState={this.state.gpioState}
           />
         </div>
       );
