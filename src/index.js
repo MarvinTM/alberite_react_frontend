@@ -99,8 +99,15 @@ class AlberiteTable extends React.Component {
                 ":" +
                 pad(date.getSeconds(), 2);
             }
+            let cellStyle = {};
+            if (this.cellStyle) {
+              cellStyle = this.cellStyle(headerProp.prop, value);
+            }
             return (
-              <td key={(row.id ? row.id : row.index) + headerProp.prop}>
+              <td
+                key={(row.id ? row.id : row.index) + headerProp.prop}
+                className={cellStyle}
+              >
                 {value}
               </td>
             );
@@ -324,6 +331,20 @@ class AlberiteEditingRow extends AlberiteEditingTable {
   }
 }
 
+class AlberiteTableGPIO extends AlberiteTable {
+  cellStyle(property, value) {
+    if (property === "status") {
+      if (value === "on") {
+        return "alberite_gpio_on";
+      } else if (value === "off") {
+        return "alberite_gpio_off";
+      } else {
+        return null;
+      }
+    }
+  }
+}
+
 class StatusBody extends React.Component {
   render() {
     return (
@@ -355,7 +376,7 @@ class StatusBody extends React.Component {
           ]}
           tableName="Riegos en cola"
         />
-        <AlberiteTable
+        <AlberiteTableGPIO
           rows={this.props.gpioState}
           headerProps={[
             { name: "Puerto", prop: "pin" },
