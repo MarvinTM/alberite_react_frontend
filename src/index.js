@@ -4,6 +4,43 @@ import "./pure-min.css";
 import "./marketing.css";
 import "./alberite.css";
 import ReactCSSTransitionGroup from "react-addons-css-transition-group";
+import { createStore } from "redux";
+import { connect } from "react-redux";
+import { Provider } from "react-redux";
+
+//Create Redux Store
+var alberiteReducer = function(state, action) {
+  if (state === undefined) {
+    state = {
+      collections: {
+        logRows: null,
+        pastActionRows: null,
+        actionRows: null,
+        gpioState: null,
+        programmedActionRows: null
+      }
+    };
+  }
+  if (action.type === "ADD_DATA_COLLECTION") {
+    let newState = {};
+    newState.collections = {};
+    for (var property in state.collections) {
+      if (state.collections.hasOwnProperty(property)) {
+        newState[property] = state.collections[property];
+      }
+    }
+    for (var property in action.collection) {
+      if (action.collection.hasOwnProperty(property)) {
+        newState.collections[property] = action.collection[property];
+      }
+    }
+    return newState;
+  } else if (action.type === "SET_CURRENT_TAB") {
+  }
+  return state;
+};
+
+var store = createStore(alberiteReducer);
 
 class Header extends React.Component {
   render() {
@@ -52,8 +89,8 @@ class Header extends React.Component {
 }
 
 class AlberiteTable extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = { transitionEnabled: false };
     setTimeout(() => this.setState({ transitionEnabled: true }), 5000);
   }
@@ -74,7 +111,7 @@ class AlberiteTable extends React.Component {
     if (!this.generateTable()) {
       theRows = [];
     } else {
-      if (this.props.rows === null) {
+      if (!this.props.rows) {
         theRows = [
           <tr className="pure-table-odd" key="loadingRows">
             <td
@@ -89,7 +126,9 @@ class AlberiteTable extends React.Component {
       } else {
         theRows = this.props.rows.map((row, idx) => {
           const theRow = row;
-          const keyValue = row.id ? row.id : row.index;
+          const keyValue = row.id
+            ? row.id
+            : row.index ? row.index : row.pin ? row.pin : "xx";
           const values = this.props.headerProps.map(headerProp => {
             let value = theRow[headerProp.prop];
             if (headerProp.prop.toLowerCase().indexOf("date") !== -1) {
@@ -367,7 +406,7 @@ class StatusBody extends React.Component {
       <div className="splash-container alberite_splash_container">
         <div className="alberite_generic_dummy_div_first" />
         <AlberiteTable
-          rows={this.props.logRows}
+          rows={this.props.collections.logRows}
           headerProps={[
             { name: "Mensaje", prop: "message" },
             { name: "Fecha", prop: "messagedate" },
@@ -376,7 +415,7 @@ class StatusBody extends React.Component {
           tableName="Mensajes de log"
         />
         <AlberiteTable
-          rows={this.props.pastActionRows}
+          rows={this.props.collections.pastActionRows}
           headerProps={[
             { name: "Fase", prop: "phase" },
             { name: "Duración", prop: "duration" },
@@ -385,7 +424,7 @@ class StatusBody extends React.Component {
           tableName="Riegos pasados"
         />
         <AlberiteTable
-          rows={this.props.actionRows}
+          rows={this.props.collections.actionRows}
           headerProps={[
             { name: "Fase", prop: "phase" },
             { name: "Duración", prop: "time" }
@@ -393,7 +432,7 @@ class StatusBody extends React.Component {
           tableName="Riegos en cola"
         />
         <AlberiteTableGPIO
-          rows={this.props.gpioState}
+          rows={this.props.collections.gpioState}
           headerProps={[
             { name: "Puerto", prop: "pin" },
             { name: "Estado", prop: "status" }
@@ -484,14 +523,14 @@ class RiegoBody extends React.Component {
       <div className="splash-container alberite_splash_container">
         <div className="alberite_generic_dummy_div_first" />
         <AlberiteEditingTable
-          rows={this.props.programmedActionRows}
+          rows={this.props.collections.programmedActionRows}
           headerProps={programFields}
           tableName="Riegos programados"
           createActionHandler={this.props.onProgrammedAction}
           deleteActionHandler={this.props.onDeleteProgrammedAction}
         />
         <AlberiteTable
-          rows={this.props.actionRows}
+          rows={this.props.collections.actionRows}
           headerProps={[
             { name: "Fase", prop: "phase" },
             { name: "Duración", prop: "time" }
@@ -512,14 +551,10 @@ class MainLayout extends React.Component {
   constructor() {
     super();
     this.state = {
-      logRows: null,
-      actionRows: null,
-      pastActionRows: null,
-      programmedActionRows: null,
-      currentTab: "status",
-      gpioState: null
+      currentTab: "status"
     };
-
+  }
+  componentDidMount() {
     this.loadData();
     setInterval(() => this.loadData(), 5000);
   }
@@ -545,7 +580,7 @@ class MainLayout extends React.Component {
     );
   }
   modifyProgrammedValues(values) {
-    var me = this;
+    const me = this;
     this.remoteRequest(
       "http://villacautela.com/insertProgrammedAction?" +
         buildGETRequest(values),
@@ -556,37 +591,90 @@ class MainLayout extends React.Component {
     );
   }
   loadData() {
-    const me = this;
-
-    this.remoteRequest("http://villacautela.com/loginfo", function(data) {
-      me.setState({ logRows: data });
-    });
-    this.remoteRequest("http://villacautela.com/pastActionsInfo", function(
-      data
-    ) {
-      me.setState({ pastActionRows: data });
-    });
-    this.remoteRequest("http://villacautela.com/actionsInfo", function(data) {
-      me.setState({ actionRows: data });
-    });
-    this.remoteRequest("http://villacautela.com/gpioInfo", function(data) {
-      me.setState({ gpioState: data });
-    });
-    this.remoteRequest(
-      "http://villacautela.com/programmedActionsInfo",
-      function(data) {
-        me.setState({ programmedActionRows: data });
+    this.readAllCollections([
+      {
+        url: "http://villacautela.com/loginfo",
+        collectionName: "logRows"
+      },
+      {
+        url: "http://villacautela.com/pastActionsInfo",
+        collectionName: "pastActionRows"
+      },
+      {
+        url: "http://villacautela.com/actionsInfo",
+        collectionName: "actionRows"
+      },
+      {
+        url: "http://villacautela.com/gpioInfo",
+        collectionName: "gpioState"
+      },
+      {
+        url: "http://villacautela.com/programmedActionsInfo",
+        collectionName: "programmedActionRows"
       }
-    );
+    ]);
   }
   setMenuTab(tab) {
     this.setState({ currentTab: tab });
   }
-  remoteRequest(url, successCallback, errorCallback) {
+  readAllCollections(collectionList, successCallback, errorCallback) {
+    this.readEachCollection(collectionList, {}, successCallback, errorCallback);
+  }
+  readEachCollection(
+    collectionList,
+    fullCollectionObj,
+    successCallback,
+    errorCallback
+  ) {
+    const me = this;
+    if (collectionList.length === 0) {
+      this.props.setCollectionValue(fullCollectionObj);
+      if (successCallback) {
+        successCallback();
+      }
+      return;
+    }
+    this.remoteRequest(
+      collectionList[0].url,
+      function(data) {
+        fullCollectionObj[collectionList[0].collectionName] = data;
+        collectionList.shift();
+        me.readEachCollection(
+          collectionList,
+          fullCollectionObj,
+          successCallback,
+          errorCallback
+        );
+      },
+      errorCallback
+    );
+  }
+  remoteRequestForDataCollection(
+    url,
+    collectionName,
+    successCallback,
+    errorCallback
+  ) {
+    var me = this;
+    this.remoteRequest(
+      url,
+      function(data) {
+        var emptyObj = {};
+        emptyObj[collectionName] = data;
+        me.props.setCollectionValue(emptyObj);
+        if (successCallback) {
+          successCallback(data);
+        }
+      },
+      errorCallback
+    );
+  }
+  remoteRequest(url, successCallback, errorCallback, credentials = true) {
+    const me = this;
     fetch(url, {
       mode: "cors",
       method: "get",
-      credentials: "include"
+      credentials: credentials ? "include" : null
     })
       .then(function(response) {
         return response.json();
@@ -595,8 +683,11 @@ class MainLayout extends React.Component {
         successCallback(data);
       })
       .catch(function(err) {
-        console.error("error while executing remote request: " + url, err);
-        if (errorCallback) {
+        if (credentials) {
+          console.warn("Failed with credentials. Retrying without...");
+          me.remoteRequest(url, successCallback, errorCallback, false);
+        } else if (errorCallback) {
+          console.error("error while executing remote request: " + url, err);
           errorCallback();
         }
       });
@@ -609,12 +700,7 @@ class MainLayout extends React.Component {
             setMenuTab={tab => this.setMenuTab(tab)}
             currentTab={this.state.currentTab}
           />
-          <StatusBody
-            logRows={this.state.logRows}
-            actionRows={this.state.actionRows}
-            pastActionRows={this.state.pastActionRows}
-            gpioState={this.state.gpioState}
-          />
+          <StatusBody collections={this.props.collections} />
         </div>
       );
     } else if (this.state.currentTab === "riego") {
@@ -625,8 +711,7 @@ class MainLayout extends React.Component {
             currentTab={this.state.currentTab}
           />
           <RiegoBody
-            actionRows={this.state.actionRows}
-            programmedActionRows={this.state.programmedActionRows}
+            collections={this.props.collections}
             onProgrammedAction={i => this.modifyProgrammedValues(i)}
             onDirectAction={i => this.modifyDirectValues(i)}
             onDeleteProgrammedAction={i => this.deleteProgrammedValue(i)}
@@ -636,8 +721,20 @@ class MainLayout extends React.Component {
     }
   }
 }
+var mapStateToProps = function(store) {
+  return { collections: store.collections };
+};
 
-ReactDOM.render(<MainLayout />, document.getElementById("root"));
+const mapDispatchToProps = dispatch => {
+  return {
+    setCollectionValue: collection =>
+      dispatch({
+        type: "ADD_DATA_COLLECTION",
+        collection: collection
+      })
+  };
+};
+const App = connect(mapStateToProps, mapDispatchToProps)(MainLayout);
 
 function pad(num, size) {
   var s = num + "";
@@ -660,3 +757,10 @@ function buildGETRequest(values) {
   }
   return GETRequest;
 }
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById("root")
+);
