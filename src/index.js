@@ -77,7 +77,11 @@ class AlberiteTable extends React.Component {
       if (this.props.rows === null) {
         theRows = [
           <tr className="pure-table-odd" key="loadingRows">
-            <td key="loadingRow" colSpan={this.props.headerProps.length + 1}>
+            <td
+              key="loadingRow"
+              colSpan={this.props.headerProps.length + 1}
+              className="alberite_single_line"
+            >
               Cargando información...
             </td>
           </tr>
@@ -120,6 +124,18 @@ class AlberiteTable extends React.Component {
     const additionalRow = this.additionalRow();
     if (additionalRow !== null) {
       theRows.push(additionalRow);
+    } else if (theRows.length === 0) {
+      theRows = [
+        <tr className="pure-table-odd" key="loadingRows">
+          <td
+            key="emptyRow"
+            colSpan={this.props.headerProps.length + 1}
+            className="alberite_single_line"
+          >
+            Nada
+          </td>
+        </tr>
+      ];
     }
     const theHeader = this.props.headerProps.map((headerProp, idx) => {
       return (

@@ -40,6 +40,10 @@
   width: 50px;
 }
 
+.alberite_single_line {
+  text-align: center;
+}
+
 .alberite_cursor {
   cursor: pointer;
 }
