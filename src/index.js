@@ -103,8 +103,15 @@ class AlberiteTable extends React.Component {
                 ":" +
                 pad(date.getSeconds(), 2);
             }
+            let cellStyle = {};
+            if (this.cellStyle) {
+              cellStyle = this.cellStyle(headerProp.prop, value);
+            }
             return (
-              <td key={(row.id ? row.id : row.index) + headerProp.prop}>
+              <td
+                key={(row.id ? row.id : row.index) + headerProp.prop}
+                className={cellStyle}
+              >
                 {value}
               </td>
             );
@@ -340,6 +347,20 @@ class AlberiteEditingRow extends AlberiteEditingTable {
   }
 }
 
+class AlberiteTableGPIO extends AlberiteTable {
+  cellStyle(property, value) {
+    if (property === "status") {
+      if (value === "on") {
+        return "alberite_gpio_on";
+      } else if (value === "off") {
+        return "alberite_gpio_off";
+      } else {
+        return null;
+      }
+    }
+  }
+}
+
 class StatusBody extends React.Component {
   render() {
     return (
@@ -370,6 +391,14 @@ class StatusBody extends React.Component {
             { name: "Duración", prop: "time" }
           ]}
           tableName="Riegos en cola"
+        />
+        <AlberiteTableGPIO
+          rows={this.props.gpioState}
+          headerProps={[
+            { name: "Puerto", prop: "pin" },
+            { name: "Estado", prop: "status" }
+          ]}
+          tableName="Estado puertos GPIO"
         />
       </div>
     );
@@ -487,7 +516,8 @@ class MainLayout extends React.Component {
       actionRows: null,
       pastActionRows: null,
       programmedActionRows: null,
-      currentTab: "status"
+      currentTab: "status",
+      gpioState: null
     };
 
     this.loadData();
@@ -539,6 +569,9 @@ class MainLayout extends React.Component {
     this.remoteRequest("http://villacautela.com/actionsInfo", function(data) {
       me.setState({ actionRows: data });
     });
+    this.remoteRequest("http://villacautela.com/gpioInfo", function(data) {
+      me.setState({ gpioState: data });
+    });
     this.remoteRequest(
       "http://villacautela.com/programmedActionsInfo",
       function(data) {
@@ -580,6 +613,7 @@ class MainLayout extends React.Component {
             logRows={this.state.logRows}
             actionRows={this.state.actionRows}
             pastActionRows={this.state.pastActionRows}
+            gpioState={this.state.gpioState}
           />
         </div>
       );
