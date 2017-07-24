@@ -18,24 +18,29 @@ var alberiteReducer = function(state, action) {
         actionRows: null,
         gpioState: null,
         programmedActionRows: null
-      }
+      },
+      currentTab: "status"
     };
   }
   if (action.type === "ADD_DATA_COLLECTION") {
-    let newState = {};
+    let newState = Object.assign({}, state);
+    var property;
     newState.collections = {};
-    for (var property in state.collections) {
+    for (property in state.collections) {
       if (state.collections.hasOwnProperty(property)) {
         newState[property] = state.collections[property];
       }
     }
-    for (var property in action.collection) {
+    for (property in action.collection) {
       if (action.collection.hasOwnProperty(property)) {
         newState.collections[property] = action.collection[property];
       }
     }
     return newState;
   } else if (action.type === "SET_CURRENT_TAB") {
+    let newState = Object.assign({}, state);
+    newState.currentTab = action.currentTab;
+    return newState;
   }
   return state;
 };
@@ -548,12 +553,6 @@ class RiegoBody extends React.Component {
 }
 
 class MainLayout extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      currentTab: "status"
-    };
-  }
   componentDidMount() {
     this.loadData();
     setInterval(() => this.loadData(), 5000);
@@ -615,7 +614,7 @@ class MainLayout extends React.Component {
     ]);
   }
   setMenuTab(tab) {
-    this.setState({ currentTab: tab });
+    this.props.setCurrentTab(tab);
   }
   readAllCollections(collectionList, successCallback, errorCallback) {
     this.readEachCollection(collectionList, {}, successCallback, errorCallback);
@@ -693,22 +692,22 @@ class MainLayout extends React.Component {
       });
   }
   render() {
-    if (this.state.currentTab === "status") {
+    if (this.props.currentTab === "status") {
       return (
         <div>
           <Header
             setMenuTab={tab => this.setMenuTab(tab)}
-            currentTab={this.state.currentTab}
+            currentTab={this.props.currentTab}
           />
           <StatusBody collections={this.props.collections} />
         </div>
       );
-    } else if (this.state.currentTab === "riego") {
+    } else if (this.props.currentTab === "riego") {
       return (
         <div>
           <Header
             setMenuTab={tab => this.setMenuTab(tab)}
-            currentTab={this.state.currentTab}
+            currentTab={this.props.currentTab}
           />
           <RiegoBody
             collections={this.props.collections}
@@ -722,7 +721,7 @@ class MainLayout extends React.Component {
   }
 }
 var mapStateToProps = function(store) {
-  return { collections: store.collections };
+  return { collections: store.collections, currentTab: store.currentTab };
 };
 
 const mapDispatchToProps = dispatch => {
@@ -731,6 +730,11 @@ const mapDispatchToProps = dispatch => {
       dispatch({
         type: "ADD_DATA_COLLECTION",
         collection: collection
+      }),
+    setCurrentTab: currentTab =>
+      dispatch({
+        type: "SET_CURRENT_TAB",
+        currentTab: currentTab
       })
   };
 };
