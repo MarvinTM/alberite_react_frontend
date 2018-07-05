@@ -560,7 +560,7 @@ class MainLayout extends React.Component {
   deleteProgrammedValue(index) {
     var me = this;
     this.remoteRequest(
-      "http://villacautela.com/cancelProgrammedAction?programmedAction=" +
+      "https://villacautela.com/cancelProgrammedAction?programmedAction=" +
         index,
       function(data) {
         //TODO: MESSAGE!!!
@@ -571,7 +571,7 @@ class MainLayout extends React.Component {
   modifyDirectValues(values) {
     var me = this;
     this.remoteRequest(
-      "http://villacautela.com/startSystemAction?" + buildGETRequest(values),
+      "https://villacautela.com/startSystemAction?" + buildGETRequest(values),
       function(data) {
         //TODO: MESSAGE!!!
         me.loadData();
@@ -581,7 +581,7 @@ class MainLayout extends React.Component {
   modifyProgrammedValues(values) {
     const me = this;
     this.remoteRequest(
-      "http://villacautela.com/insertProgrammedAction?" +
+      "https://villacautela.com/insertProgrammedAction?" +
         buildGETRequest(values),
       function(data) {
         //TODO: MESSAGE!!!
@@ -592,23 +592,23 @@ class MainLayout extends React.Component {
   loadData() {
     this.readAllCollections([
       {
-        url: "http://villacautela.com/loginfo",
+        url: "https://villacautela.com/loginfo",
         collectionName: "logRows"
       },
       {
-        url: "http://villacautela.com/pastActionsInfo",
+        url: "https://villacautela.com/pastActionsInfo",
         collectionName: "pastActionRows"
       },
       {
-        url: "http://villacautela.com/actionsInfo",
+        url: "https://villacautela.com/actionsInfo",
         collectionName: "actionRows"
       },
       {
-        url: "http://villacautela.com/gpioInfo",
+        url: "https://villacautela.com/gpioInfo",
         collectionName: "gpioState"
       },
       {
-        url: "http://villacautela.com/programmedActionsInfo",
+        url: "https://villacautela.com/programmedActionsInfo",
         collectionName: "programmedActionRows"
       }
     ]);
