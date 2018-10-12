@@ -19,10 +19,12 @@ body {
   display: flex;
   flex-direction: row;
   justify-content: center;
+  font-size: 12px;
 }
 @media only screen and (min-width: 800px) {
   .alberiteHeader {
     justify-content: flex-end;
+    font-size: 16px;
   }
 }
 
