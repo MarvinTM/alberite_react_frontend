@@ -665,7 +665,7 @@ class MainLayout extends React.Component {
     );
   }
 
-  remoteRequest(url, successCallback, errorCallback, credentials = false) {
+  remoteRequest(url, successCallback, errorCallback, credentials = true) {
     const me = this;
     fetch(url, {
       mode: "cors",
