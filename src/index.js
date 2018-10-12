@@ -309,11 +309,13 @@ class AlberiteEditingTable extends AlberiteTable {
     this.setState(value);
   }
   additionalColumnHeader() {
-    return <td className="alberiteTableMainCell" key="additionalColHeader" />;
+    return (
+      <td className="alberiteTableEditableCell" key="additionalColHeader" />
+    );
   }
   additionalColumn(index) {
     return (
-      <td className="alberiteTableMainCell" key="deleteButton">
+      <td className="alberiteTableEditableCell" key="deleteButton">
         <button
           onClick={() => {
             this.props.deleteActionHandler(index);
@@ -362,7 +364,7 @@ class AlberiteEditingTable extends AlberiteTable {
         field = <input />;
       }
       return (
-        <td className="alberiteTableMainCell" key={headerProp.name}>
+        <td className="alberiteTableEditableCell" key={headerProp.name}>
           {field}
         </td>
       );

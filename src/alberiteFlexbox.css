@@ -112,6 +112,18 @@ a:hover {
   border-spacing: 0;
 }
 
+.alberiteTableEditableCell {
+  color: #7f8c8d;
+  line-height: 1rem;
+  background-color: #f2f2f2;
+  text-align: center;
+  padding: .5em .5em;
+  border-width: 0 0 1px;
+  border-color: grey;
+  border-bottom: 1px solid #cbcbcb;
+  border-spacing: 0;
+}
+
 .alberite_gpio_on {
   color: red;
   font-weight: bold;
