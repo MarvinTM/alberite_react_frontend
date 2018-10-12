@@ -17,7 +17,13 @@ body {
   background-color: navy;
   font-family: sans-serif;
   display: flex;
-  justify-content: flex-end;
+  flex-direction: row;
+  justify-content: center;
+}
+@media only screen and (min-width: 800px) {
+  .alberiteHeader {
+    justify-content: flex-end;
+  }
 }
 
 .alberiteMenuItem {
@@ -37,8 +43,14 @@ body {
   font-size: 120%;
   text-decoration: none;
   text-transform: uppercase;
-  margin-right: auto;
   padding: 1REM;
+  display: inline-block;
+}
+
+@media only screen and (min-width: 800px) {
+  .alberiteAppItem {
+    margin-right: auto;
+  }
 }
 
 .alberiteMenuLink {
