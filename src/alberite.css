@@ -56,15 +56,3 @@
   opacity: 2;
   transition: opacity 2s ease-in;
 }
-
-.alberite_gpio_on {
-  background-color: white;
-  color: red;
-  font-weight: bold;
-}
-
-.alberite_gpio_off {
-  background-color: white;
-  color: green;
-  font-weight: bold;
-}

@@ -1,8 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./pure-min.css";
-import "./marketing.css";
 import "./alberite.css";
+import "./alberiteFlexbox.css";
 import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 import { createStore } from "redux";
 import { connect } from "react-redux";
@@ -54,40 +53,37 @@ class Header extends React.Component {
       { id: "riego", name: "Riego" }
     ];
     const menuItems = tabs.map(menuItem => {
-      let theClassName = "pure-menu-item";
-      theClassName +=
-        menuItem.id === this.props.currentTab ? " pure-menu-selected" : "";
+      let theClassName = "alberiteMenuItem";
+      theClassName += menuItem.id === this.props.currentTab ? " selected" : "";
       return (
-        <li className={theClassName} key={menuItem.id}>
+        <div className={theClassName} key={menuItem.id}>
           <a
-            className="pure-menu-link alberite_cursor"
+            className="link alberite_cursor"
             onClick={() => {
               this.props.setMenuTab(menuItem.id);
             }}
           >
             {menuItem.name}
           </a>
-        </li>
+        </div>
       );
     });
     menuItems.push(
-      <li className="pure-menu-item" key="logout">
-        <a href="/logout" className="pure-menu-link alberite_cursor">
+      <div className="alberiteMenuItem" key="logout">
+        <a href="/logout" className="alberiteMenuLink alberite_cursor">
           Salir
         </a>
-      </li>
+      </div>
     );
 
     return (
-      <div className="header">
-        <div className="home-menu pure-menu pure-menu-horizontal pure-menu-fixed menu_shadow">
-          <a className="pure-menu-heading alberite_page_name" href="">
+      <div className="alberiteHeader">
+        <div className="alberiteAppItem">
+          <a href="" className="alberiteMenuLink">
             Villa Cautela
           </a>
-          <ul className="pure-menu-list">
-            {menuItems}
-          </ul>
         </div>
+        {menuItems}
       </div>
     );
   }
@@ -118,11 +114,11 @@ class AlberiteTable extends React.Component {
     } else {
       if (!this.props.rows) {
         theRows = [
-          <tr className="pure-table-odd" key="loadingRows">
+          <tr key="loadingRows">
             <td
+              className="alberiteTableMainCell"
               key="loadingRow"
               colSpan={this.props.headerProps.length + 1}
-              className="alberite_single_line"
             >
               Cargando información...
             </td>
@@ -147,9 +143,10 @@ class AlberiteTable extends React.Component {
                 ":" +
                 pad(date.getSeconds(), 2);
             }
-            let cellStyle = {};
+            let cellStyle = "alberiteTableMainCell ";
             if (this.cellStyle) {
-              cellStyle = this.cellStyle(headerProp.prop, value);
+              cellStyle =
+                this.cellStyle(headerProp.prop, value) + " " + cellStyle;
             }
             return (
               <td
@@ -165,7 +162,7 @@ class AlberiteTable extends React.Component {
             values.push(additionalColumn);
           }
           return (
-            <tr className="pure-table-odd alberite_fade" key={keyValue}>
+            <tr className="alberiteTableRow alberite_fade" key={keyValue}>
               {values}
             </tr>
           );
@@ -177,11 +174,11 @@ class AlberiteTable extends React.Component {
       theRows.push(additionalRow);
     } else if (theRows.length === 0) {
       theRows = [
-        <tr className="pure-table-odd" key="loadingRows">
+        <tr className="table" key="loadingRows">
           <td
+            className="alberiteTableMainCell"
             key="emptyRow"
             colSpan={this.props.headerProps.length + 1}
-            className="alberite_single_line"
           >
             Nada
           </td>
@@ -190,7 +187,7 @@ class AlberiteTable extends React.Component {
     }
     const theHeader = this.props.headerProps.map((headerProp, idx) => {
       return (
-        <th key={headerProp.name}>
+        <th className="alberiteTableHeaderCell" key={headerProp.name}>
           {headerProp.name}
         </th>
       );
@@ -201,10 +198,11 @@ class AlberiteTable extends React.Component {
     }
     return (
       <div>
-        <table className="pure-table pure-table-horizontal alberite_generic_table alberite_log_table">
+        <table className="alberiteTable">
           <thead>
             <tr key="header">
               <th
+                className="alberiteTableHeaderCell"
                 colSpan={
                   this.props.headerProps.length +
                   (this.additionalColumnHeader() !== null ? 1 : 0)
@@ -213,7 +211,7 @@ class AlberiteTable extends React.Component {
                 {this.props.tableName}
               </th>
             </tr>
-            <tr key="headerProps">
+            <tr className="alberiteTableHeaderCell" key="headerProps">
               {theHeader}
             </tr>
           </thead>
@@ -308,11 +306,11 @@ class AlberiteEditingTable extends AlberiteTable {
     this.setState(value);
   }
   additionalColumnHeader() {
-    return <td key="additionalColHeader" />;
+    return <td className="alberiteTableMainCell" key="additionalColHeader" />;
   }
   additionalColumn(index) {
     return (
-      <td key="deleteButton">
+      <td className="alberiteTableMainCell" key="deleteButton">
         <button
           onClick={() => {
             this.props.deleteActionHandler(index);
@@ -361,13 +359,13 @@ class AlberiteEditingTable extends AlberiteTable {
         field = <input />;
       }
       return (
-        <td key={headerProp.name}>
+        <td className="alberiteTableMainCell" key={headerProp.name}>
           {field}
         </td>
       );
     });
     fields.push(
-      <td key="okButton">
+      <td className="alberiteTableMainCell" key="okButton">
         <button
           onClick={() => {
             this.props.createActionHandler(this.state);
@@ -378,7 +376,7 @@ class AlberiteEditingTable extends AlberiteTable {
       </td>
     );
     return (
-      <tr className="pure-table-odd" key="editingRow">
+      <tr className="table" key="editingRow">
         {fields}
       </tr>
     );
@@ -408,8 +406,7 @@ class AlberiteTableGPIO extends AlberiteTable {
 class StatusBody extends React.Component {
   render() {
     return (
-      <div className="splash-container alberite_splash_container">
-        <div className="alberite_generic_dummy_div_first" />
+      <div className="alberiteTableContainer">
         <AlberiteTable
           rows={this.props.collections.logRows}
           headerProps={[
@@ -525,8 +522,7 @@ class RiegoBody extends React.Component {
       }
     ];
     return (
-      <div className="splash-container alberite_splash_container">
-        <div className="alberite_generic_dummy_div_first" />
+      <div className="alberiteTableContainer">
         <AlberiteEditingTable
           rows={this.props.collections.programmedActionRows}
           headerProps={programFields}
@@ -668,12 +664,13 @@ class MainLayout extends React.Component {
       errorCallback
     );
   }
-  remoteRequest(url, successCallback, errorCallback, credentials = true) {
+
+  remoteRequest(url, successCallback, errorCallback, credentials = false) {
     const me = this;
     fetch(url, {
       mode: "cors",
       method: "get",
-      credentials: credentials ? "include" : null
+      credentials: credentials ? "include" : "omit"
     })
       .then(function(response) {
         return response.json();
@@ -694,7 +691,7 @@ class MainLayout extends React.Component {
   render() {
     if (this.props.currentTab === "status") {
       return (
-        <div>
+        <div className="alberiteMainLayout">
           <Header
             setMenuTab={tab => this.setMenuTab(tab)}
             currentTab={this.props.currentTab}
@@ -704,7 +701,7 @@ class MainLayout extends React.Component {
       );
     } else if (this.props.currentTab === "riego") {
       return (
-        <div>
+        <div className="alberiteMainLayout">
           <Header
             setMenuTab={tab => this.setMenuTab(tab)}
             currentTab={this.props.currentTab}

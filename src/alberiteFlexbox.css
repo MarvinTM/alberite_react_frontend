@@ -1,0 +1,95 @@
+html,
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
+}
+
+#root {
+  height: 100%;
+}
+
+.alberiteMainLayout {
+  background-color: #1f8dd6;
+}
+.alberiteHeader {
+  background-color: navy;
+  font-family: sans-serif;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.alberiteMenuItem {
+  color: #fff;
+  font-weight: 400;
+  text-decoration: none;
+  padding: 1REM;
+}
+
+.alberiteAppItem {
+  color: #fff;
+  font-weight: 400;
+  font-size: 120%;
+  text-decoration: none;
+  text-transform: uppercase;
+  margin-right: auto;
+  padding: 1REM;
+}
+
+.alberiteMenuLink {
+  color: #fff;
+  text-decoration: none;
+}
+
+.alberiteTableContainer {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.alberiteTable {
+  background-color: #f2f2f2;
+  font-size: 16px;
+  font-family: sans-serif;
+  border: 0px;
+  box-shadow: 0 0 8px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19);
+  margin: 0.5rem;
+}
+
+.alberiteTableHeader {
+}
+.alberiteTableRow {
+}
+
+.alberiteTableHeaderCell {
+  color: #000;
+  background-color: #e0e0e0;
+  font-weight: bold;
+  padding: .5em 1em;
+  border-width: 0 0 1px;
+  border-color: grey;
+  border-bottom: 1px solid #cbcbcb;
+  border-spacing: 0;
+}
+
+.alberiteTableMainCell {
+  color: #7f8c8d;
+  line-height: 1rem;
+  background-color: #f2f2f2;
+  text-align: center;
+  padding: .5em 1em;
+  border-width: 0 0 1px;
+  border-color: grey;
+  border-bottom: 1px solid #cbcbcb;
+  border-spacing: 0;
+}
+
+.alberite_gpio_on {
+  color: red;
+  font-weight: bold;
+}
+
+.alberite_gpio_off {
+  color: green;
+  font-weight: bold;
+}
