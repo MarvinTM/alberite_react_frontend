@@ -54,7 +54,10 @@ class Header extends React.Component {
     ];
     const menuItems = tabs.map(menuItem => {
       let theClassName = "alberiteMenuItem";
-      theClassName += menuItem.id === this.props.currentTab ? " selected" : "";
+      theClassName +=
+        menuItem.id === this.props.currentTab
+          ? " alberiteMenuItem--selected"
+          : "";
       return (
         <div className={theClassName} key={menuItem.id}>
           <a
