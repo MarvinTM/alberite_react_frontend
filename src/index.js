@@ -132,7 +132,11 @@ class AlberiteTable extends React.Component {
           const theRow = row;
           const keyValue = row.id
             ? row.id
-            : row.index ? row.index : row.pin ? row.pin : "xx";
+            : row.index
+            ? row.index
+            : row.pin
+            ? row.pin
+            : "xx";
           const values = this.props.headerProps.map(headerProp => {
             let value = theRow[headerProp.prop];
             if (headerProp.prop.toLowerCase().indexOf("date") !== -1) {
@@ -275,12 +279,16 @@ class AlberiteHour extends React.Component {
           onChange={evt => {
             this.setHour(evt.target.value);
           }}
-        />:<input
+        />
+        :
+        <input
           className="alberite_hour_inputs"
           onChange={evt => {
             this.setMinute(evt.target.value);
           }}
-        />:<input
+        />
+        :
+        <input
           className="alberite_hour_inputs"
           onChange={evt => {
             this.setSecond(evt.target.value);
@@ -740,7 +748,10 @@ const mapDispatchToProps = dispatch => {
       })
   };
 };
-const App = connect(mapStateToProps, mapDispatchToProps)(MainLayout);
+const App = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(MainLayout);
 
 function pad(num, size) {
   var s = num + "";
