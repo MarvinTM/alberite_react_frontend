@@ -601,7 +601,6 @@ class MainLayout extends React.Component {
   }
   deleteAction(index) {
     var me = this;
-    alert("deleting: " + index);
     this.remoteRequest(
       "https://villacautela.com/cancelAction?action=" + index,
       function(data) {
