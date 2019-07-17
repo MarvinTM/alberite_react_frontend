@@ -416,6 +416,27 @@ class AlberiteTableGPIO extends AlberiteTable {
   }
 }
 
+class AlberiteTableRiegos extends AlberiteTable {
+  additionalColumnHeader() {
+    return (
+      <td className="alberiteTableEditableCell" key="additionalColHeader" />
+    );
+  }
+  additionalColumn(index) {
+    return (
+      <td className="alberiteTableEditableCell" key="deleteButton">
+        <button
+          onClick={() => {
+            this.props.deleteActionHandler(index);
+          }}
+        >
+          Borrar
+        </button>
+      </td>
+    );
+  }
+}
+
 class StatusBody extends React.Component {
   render() {
     return (
@@ -543,13 +564,14 @@ class RiegoBody extends React.Component {
           createActionHandler={this.props.onProgrammedAction}
           deleteActionHandler={this.props.onDeleteProgrammedAction}
         />
-        <AlberiteTable
+        <AlberiteTableRiegos
           rows={this.props.collections.actionRows}
           headerProps={[
             { name: "Fase", prop: "phase" },
             { name: "Duración", prop: "time" }
           ]}
           tableName="Riegos en cola"
+          deleteActionHandler={this.props.onDeleteAction}
         />
         <AlberiteEditingRow
           headerProps={directFields}
@@ -573,6 +595,16 @@ class MainLayout extends React.Component {
         index,
       function(data) {
         //TODO: MESSAGE!!!
+        me.loadData();
+      }
+    );
+  }
+  deleteAction(index) {
+    var me = this;
+    alert("deleting: " + index);
+    this.remoteRequest(
+      "https://villacautela.com/cancelAction?action=" + index,
+      function(data) {
         me.loadData();
       }
     );
@@ -724,6 +756,7 @@ class MainLayout extends React.Component {
             onProgrammedAction={i => this.modifyProgrammedValues(i)}
             onDirectAction={i => this.modifyDirectValues(i)}
             onDeleteProgrammedAction={i => this.deleteProgrammedValue(i)}
+            onDeleteAction={i => this.deleteAction(i)}
           />
         </div>
       );
